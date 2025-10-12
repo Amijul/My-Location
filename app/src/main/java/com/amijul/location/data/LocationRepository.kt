@@ -8,12 +8,12 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.Build
 import com.amijul.location.domain.LocationData
+import com.amijul.location.util.isOnline
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.time.withTimeoutOrNull
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeoutOrNull
 import java.lang.IllegalStateException
@@ -30,6 +30,8 @@ class LocationRepository(private val ctx: Context): LocationData {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
+
+    override fun isOnline(): Boolean = ctx.isOnline()
 
     @SuppressLint("MissingPermission")
     override suspend fun getLocation(accuracy: Boolean): Location? {

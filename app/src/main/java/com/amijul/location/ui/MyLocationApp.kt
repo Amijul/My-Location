@@ -92,12 +92,15 @@ fun MyLocationApp(
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text("My Location", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
-                    Text(
-                        state.address.ifBlank { "Grant permission to see your address" },
-                        color = Color.White.copy(alpha = 0.9f),
-                        fontSize = 14.sp,
-                        lineHeight = 18.sp
-                    )
+                    state.address.ifBlank { if(state.error != null) {state.error}  else "Turn on internet & fetch address" }
+                        ?.let {
+                            Text(
+                                it,
+                                color = if(state.error != null) MaterialTheme.colorScheme.error else Color.White.copy(alpha = 0.9f),
+                                fontSize = 14.sp,
+                                lineHeight = 18.sp
+                            )
+                        }
                     Spacer(Modifier.height(8.dp))
                     Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         Button(onClick = { requestPermissions() }) {
@@ -168,17 +171,10 @@ fun MyLocationApp(
                 LocationInfo("Postal Code", a?.postalCode.orEmpty())
                 LocationInfo("Country", a?.countryName.orEmpty())
 
-                if (state.error != null) {
-                    Spacer(Modifier.height(8.dp))
-                    Text(
-                        "Error: ${state.error}",
-                        color = MaterialTheme.colorScheme.error,
-                        fontSize = 13.sp
-                    )
-                }
+
             }
 
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(12.dp))
         }
     }
 }
