@@ -12,6 +12,7 @@ class Amijul: Application() {
 
         startKoin {
             androidContext(this@Amijul)
+            modules(myModule)
         }
     }
 }
