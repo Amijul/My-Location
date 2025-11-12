@@ -1,6 +1,8 @@
 package com.amijul.location.data
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.location.Address
 import android.location.Geocoder
@@ -25,7 +27,7 @@ class LocationRepository(private val ctx: Context): LocationData {
 
     private val fused by lazy { LocationServices.getFusedLocationProviderClient(ctx) }
     private val locationManager = ctx.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
+    private val clipBoard = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
     private fun isLocationEnabled(): Boolean {
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
                 locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
@@ -105,6 +107,12 @@ class LocationRepository(private val ctx: Context): LocationData {
         } catch (_: IllegalArgumentException) {
             null
         }
+    }
+
+    override fun copiedAddress(addr: String) {
+        if(addr.isEmpty()) return
+        clipBoard.setPrimaryClip(ClipData.newPlainText("Address", addr))
+
     }
 
 }

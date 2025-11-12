@@ -3,13 +3,17 @@ package com.amijul.location.ui
 import android.Manifest
 import android.content.Intent
 import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,7 +21,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,6 +43,7 @@ fun MyLocationApp(
 ) {
     val ctx = LocalContext.current
     val state by vm.state.collectAsStateWithLifecycle()
+    val scope = rememberCoroutineScope()
 
     val launcher = rememberLauncherForActivityResult(
         ActivityResultContracts.RequestMultiplePermissions()
@@ -91,7 +99,7 @@ fun MyLocationApp(
                     modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    Text("My Location", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
+                    //Text("My Location", color = Color.White, fontSize = 22.sp, fontWeight = FontWeight.SemiBold)
                     state.address.ifBlank { if(state.error != null) {state.error}  else "Turn on internet & fetch address" }
                         ?.let {
                             Text(
@@ -102,9 +110,29 @@ fun MyLocationApp(
                             )
                         }
                     Spacer(Modifier.height(8.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
                         Button(onClick = { requestPermissions() }) {
                             Text("Get Location")
+                        }
+
+                        if(state.address.isNotBlank()){
+                            IconButton(
+                                onClick = {
+                                    vm.copiedAddress(state.address)
+                                    Toast.makeText(ctx, "Copied", Toast.LENGTH_SHORT).show()
+                                }
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ContentCopy,
+                                    contentDescription = "Copy",
+                                    tint = Color(0xF8FAF9FC),
+                                    modifier = Modifier
+                                )
+                            }
                         }
                         if (state.isLoading) {
                             CircularProgressIndicator(

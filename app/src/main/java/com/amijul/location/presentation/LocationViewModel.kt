@@ -67,7 +67,11 @@ class LocationViewModel(private val repo: LocationData) : ViewModel() {
             }
         }
     }
-
+    fun copiedAddress(addr: String) {
+        viewModelScope.launch {
+            repo.copiedAddress(addr = addr)
+        }
+    }
 
 
 }

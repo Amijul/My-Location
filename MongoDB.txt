@@ -1,0 +1,4 @@
+mongodb+srv://Amijul:<db_password>@notes.yexiovw.mongodb.net/?appName=Notes
+
+
+MongoDB
